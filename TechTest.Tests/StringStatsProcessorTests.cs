@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 using NUnit.Framework;
 using TechTest.Core;
@@ -48,6 +49,9 @@ namespace TechTest.Tests
 
         [TestCase("This string has fourteen words in it but some arent real words! $%%^^¬ .!3sdfsdf", 14)]
         [TestCase("Oneword", 1)]
+        [TestCase(" Space prefixed", 2)]
+        [TestCase("Space suffixed ", 2)]
+        [TestCase(" Space prefix and suffix ", 4)]
         public async Task GivenValidInput_WhenRun_ThenNumberOfWordsCorrect(string testSubject, int expectedWordCount)
         {
             //Arrange
@@ -72,6 +76,25 @@ namespace TechTest.Tests
             //Assert
             Assert.AreEqual(expectedLongestWordCharacterCount, stats.LongestWordNumberOfCharacters);
         }
+
+        [Test]
+        public async Task GivenMassiveInput_WhenRun_ThenStatsCorrect()
+        {
+            //Arrange
+            int wordCount = 100000000;  //pc can cope with 100 million megatrons, but if we stick another zero on there to make it
+                                        //a billion, we get an out of memory exception before even hitting the string processor.
+                                        //at 100 million, test takes approx 13 seconds on this box
+            string repeatWord = "Megatron ";
+            var testSubject = string.Concat(Enumerable.Repeat(repeatWord, wordCount));
+
+            //Act
+            var stats = await _stringStatsProcessor.Run(testSubject);
+
+            //Assert
+            Assert.AreEqual(wordCount, stats.NumberOfWords);
+        }
+
+
 
     }
 }

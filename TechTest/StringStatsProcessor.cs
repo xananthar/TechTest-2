@@ -24,7 +24,8 @@ namespace TechTest
                 throw new ArgumentNullException("subject");
             }
 
-            var words = subject.Split(' ').ToList();
+            //split on space on the trimmed version of the string so we ensure we dont get any empty elements in the words list
+            var words = subject.Trim().Split(' ').ToList();
 
             return new StringStatsModel
             {
